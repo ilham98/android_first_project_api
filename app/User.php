@@ -16,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'npk', 'password', 'role_id', 'departemen_id'
     ];
 
     /**
@@ -36,4 +36,15 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    const CREATED_AT = 'created_on';
+    const UPDATED_AT = 'updated_on';
+
+    public function karyawan() {
+        return $this->belongsTo('App\SQLSRVKaryawan', 'npk', 'npk');
+    }
+
+    public function role() {
+        return $this->belongsTo('App\Role', 'role_id', 'id');
+    }
 }
