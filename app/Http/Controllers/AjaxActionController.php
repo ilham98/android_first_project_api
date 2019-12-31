@@ -21,6 +21,7 @@ class AjaxActionController extends Controller
             WHERE stok > 0 
                 AND 
                 purchase_order_id = $purchase_order_id
+                AND tr_item.nama LIKE '%".$request->q."%'
         "));
         return $item;
     }
@@ -29,11 +30,17 @@ class AjaxActionController extends Controller
         $purchase_order_id = $request->purchase_order_id;
         $asetIds = $request->asetIds ? implode(',', json_decode($request->asetIds)) : '';
         $item = DB::select(DB::raw("
-        SELECT tr_aset.id, item_id, nama, COUNT(tr_aset.id) AS stok FROM tr_aset, tr_item
+        SELECT tr_aset.registration_number, tr_aset.id, item_id, nama, COUNT(tr_aset.id) AS stok FROM tr_aset, tr_item
             WHERE item_id = tr_item.id
                 AND permintaan_pengeluaran_barang_id IS NULL
             ".(strlen($asetIds) > 0 ? " AND tr_aset.id NOT IN ($asetIds) " : " ")."
+            AND tr_aset.deleted_on IS NULL
+            AND 
+                purchase_order_id = $purchase_order_id
+                AND tr_item.nama LIKE '%".$request->q."%'
+                
             GROUP BY item_id
+            
         "));
 
         return $item;

@@ -3,7 +3,12 @@ var dt = $(`${tableId}`).DataTable({
         serverSide: true,
         ajax: {
             'url': url,
+            data: function(d) {
+                d.start_date = $('#start_date').val(),
+                d.end_date = $('#end_date').val()
+            }
         },
+        
         columns: columns
     });
 

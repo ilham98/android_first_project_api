@@ -13,7 +13,7 @@ class PurchaseOrder extends Model
     const CREATED_AT = 'created_on';
     const DELETED_AT = 'deleted_on';
 
-    protected $fillable = ['date', 'vendor_id', 'created_by', 'updated_by', 'po_number'];
+    protected $fillable = ['date', 'vendor_id', 'created_by', 'updated_by', 'deleted_by', 'po_number'];
 
     public function vendor() {
         return $this->belongsTo('App\Vendor', 'vendor_id', 'id');

@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta http-equiv="Content-Language" content="en">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Analytics Dashboard - This is an example dashboard created using build-in elements and components.</title>
+    <title>@yield('title')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
     <meta name="description" content="This is an example dashboard created using build-in elements and components.">
     <meta name="msapplication-tap-highlight" content="no"
@@ -213,82 +213,82 @@
                         <ul class="vertical-nav-menu mt-3">
                             <li>
                                 <a href="{{ url('/') }}" class="{{ url('/') == url()->current() ? 'mm-active' : '' }}">
-                                    <i class="metismenu-icon pe-7s-rocket"></i>
+                                    <i class="metismenu-icon pe-7s-display1"></i>
                                     Dashboard
                                 </a>
                             </li>
+                            <li class="app-sidebar__heading">Master Data</li>
                             <li>
                                 <a href="{{ url('/user') }}" class="{{ url('/user') == url()->current() ? 'mm-active' : '' }}">
-                                    <i class="metismenu-icon pe-7s-rocket"></i>
+                                    <i class="metismenu-icon pe-7s-users"></i>
                                     User
-
                                 </a>
                             </li>
-                            <li class="app-sidebar__heading">Purchase</li>
                             <li>
-                                <a href="#">
-                                    <i class="metismenu-icon pe-7s-diamond"></i>
-                                    Purchase
-                                    <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                                <a href="{{ url('/vendor') }}" class="{{ url('/vendor') == url()->current() ? 'mm-active' : '' }}">
+                                    <i class="metismenu-icon pe-7s-id">
+                                    </i>Vendor
                                 </a>
-                                <ul>
-                                    <li>
-                                        <a href="{{ url('vendor') }}">
-                                            <i class="metismenu-icon">
-                                            </i>Vendor
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ url('purchase-order') }}">
-                                            <i class="metismenu-icon">
-                                            </i>Purchase Order (PO)
-                                        </a>
-                                    </li>
-                                </ul>
                             </li>
-                            <li class="app-sidebar__heading">Asset</li>
-                            <!-- <li>
-                                <a href="#">
-                                    <i class="metismenu-icon pe-7s-diamond"></i>
-                                    IT Asset
-                                    <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
-                                </a>
-                                <ul>
-                                    <li>
-                                        <a href="{{ url('vendor') }}">
-                                            <i class="metismenu-icon">
-                                            </i>Vendor
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ url('purchase-order') }}">
-                                            <i class="metismenu-icon">
-                                            </i>Purchase Order (PO)
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li> -->
                             <li>
-                                <a href="{{ url('aset') }}" class="{{ url()->current() == url('aset') ? 'mm-active' : '' }}">
-                                    <i class="metismenu-icon pe-7s-rocket"></i>
+                                <a href="{{ url('/software') }}" class="{{ url('/software') == url()->current() ? 'mm-active' : '' }}">
+                                    <i class="metismenu-icon pe-7s-tools">
+                                    </i>Software
+                                </a>
+                            </li>
+                            <li class="app-sidebar__heading">Transaction</li>
+                            <li>
+                                <a href="{{ url('/purchase-order') }}" class="{{ url('/purchase-order') == url()->current() ? 'mm-active' : '' }}">
+                                <i class="metismenu-icon pe-7s-note2"></i>
+                                    </i>Purchase Order
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ url('aset') }}" class="{{ (
+                                    Request::is('aset') || 
+                                    Request::is('aset/*')
+                                ) ? 'mm-active' : '' }}">
+                                    <i class="metismenu-icon pe-7s-phone"></i>
+                                    Aset
+                                </a>
+                            </li>   
+                            <li>
+                                <a href="{{ url('permintaan-pengeluaran-barang') }}" class="{{ (
+                                    Request::is('permintaan-pengeluaran-barang') || 
+                                    Request::is('permintaan-pengeluaran-barang/*')
+                                ) ? 'mm-active' : '' }}">
+                                    <i class="metismenu-icon pe-7s-mail-open-file"></i>
+                                    P. Pengeluaran Barang
+                                </a>
+                            </li>                         
+                            <li class="app-sidebar__heading">Report</li>
+                            <li>
+                                <a href="{{ url('report/aset') }}" class="{{ (Request::is('report/aset') || Request::is('report/aset/*')) ? 'mm-active' : '' }}">
+                                    <i class="metismenu-icon pe-7s-copy-file"></i>
                                     Aset
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ url('permintaan-pengeluaran-barang') }}" class="{{ url()->current() == url('permintaan-pengeluaran-barang') ? 'mm-active' : '' }}">
-                                    <i class="metismenu-icon pe-7s-rocket"></i>
-                                    P. Pengeluaran Barang
+                                <a href="{{ url('report/purchase-order') }}" class="{{ (Request::is('report/purchase-order') || Request::is('report/purchase-order/*')) ? 'mm-active' : '' }}">
+                                    <i class="metismenu-icon pe-7s-copy-file"></i>
+                                    Purchase Order
                                 </a>
                             </li>
-                        </ul>
+                            <li>
+                                <a href="{{ url('report/pengeluaran-barang') }}" class="{{ (Request::is('report/pengeluaran-barang') || Request::is('report/pengeluaran-barang/*')) ? 'mm-active' : '' }}">
+                                    <i class="metismenu-icon pe-7s-copy-file"></i>
+                                    Pengeluaran Barang
+                                </a>
+                            </li>
                     </div>
                 </div>
             </div>
             @yield('content')
             <script src="http://maps.google.com/maps/api/js?sensor=true"></script>
         </div>
+        @yield('extra')
     </div>
-    @yield('extra')
+    
     
     <script type="text/javascript" src="/scripts/main.js"></script>
     <script>

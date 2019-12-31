@@ -1,5 +1,7 @@
 @extends('master')
 
+@section('title', config('app.name').' | Edit Aset')
+
 @section('style')
 <link rel="stylesheet" type="text/css" href="{{ asset('css/selectize.css') }}" />
 <style>
@@ -34,7 +36,7 @@
                                     <div class="form-group">
                                         <label>PO Number</label>
                                         <select class="form-control" id="po_number" name="po_number">
-                                            <option value="{{ $aset->purchase_order_id }}">{{ $aset->item->purchase_order->po_number }}</option>
+                                            <option value="{{ $aset->item->purchase_order_id }}">{{ $aset->item->purchase_order->po_number }}</option>
                                         </select>
                                     </div>
                                     <div class="form-group">
@@ -62,17 +64,17 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-6" id="userContainer">
                                     <div class="form-group">
                                         <label>Departemen</label>
                                         <select class="form-control" name="departemen" id="departemen">
-                                            <option value="{{ $aset->karyawan->departemen_id }}">{{ $aset->karyawan->departemen }}</option>
+                                            <option value="{{ $aset->karyawan ? $aset->karyawan->kode_unit_kerja : null }}">{{ $aset->karyawan ? $aset->karyawan->unit_kerja : '' }}</option>
                                         </select>
                                     </div>
                                     <div class="form-group">
                                         <label>User</label>
                                         <select class="form-control" name="user" id="user">
-                                            <option value="{{ $aset->karyawan->npk }}">{{ $aset->karyawan->nama }}</option>
+                                            <option value="{{ $aset->karyawan ? $aset->karyawan->npk : null }}">{{ $aset->karyawan ? $aset->karyawan->nama : '' }}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -94,36 +96,5 @@
 <script src="{{ asset('js/jqueryValidation.min.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
 <script src="{{ asset('js/views/asetCreate.js') }}"></script>
-<script>
-    // po_number[0].selectize.addOption({
-    //     id: {{ $aset->item->purchase_order->id }},
-    //     po_number: "{{ $aset->item->purchase_order->po_number }}"
-    // });
-    // po_number[0].selectize.setValue(25);
-
-    // item[0].selectize.addOption({
-    //     id: {{ $aset->item->id }},
-    //     nama: "{{ $aset->item->nama }}",
-    //     stok: 6
-    // });
-
-    // item[0].selectize.setValue({{ $aset->item->id }});
-
-    // departemen[0].selectize.addOption({
-    //     id: {{ $aset->karyawan->departemen_id }},
-    //     nama: "{{ $aset->karyawan->departemen }}",
-    // });
-
-    // departemen[0].selectize.setValue({{ $aset->karyawan->departemen_id }});
-
-    // karyawan[0].selectize.addOption({
-    //     npk: "{{ $aset->npk }}",
-    //     nama: "{{ $aset->karyawan->nama }}",
-    // });
-
-    // karyawan[0].selectize.setValue("{{ $aset->npk }}");
-
-    
-</script>
 
 @endsection

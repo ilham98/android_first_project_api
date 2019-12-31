@@ -1,5 +1,7 @@
 @extends('master')
 
+@section('title', config('app.name').' | User')
+
 @section('style')
 <link rel="stylesheet" type="text/css" href="{{ asset('css/dataTablesBootstrap4.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ asset('css/dataTablesBoostrap4AdditionalConfiguration.css') }}">
@@ -24,7 +26,7 @@
                     <table class='table' id='user-table' style="width: 100%">
                         <thead>
                             <tr>
-                                <th></th>
+                                <th>No</th>
                                 <th>NPK</th>
                                 <th>Role</th>
                                 <th>Option</th>
@@ -53,13 +55,11 @@
     }
 
     var tableId = "#user-table";
-    var columns = [{
-            "class": "sorting_disabled details-control",
-            "data": null,
-            "defaultContent": "",
+    var columns = [
+        {
+            data: null,
             searchable: false,
-            orderable: false,
-            width: "1%"
+            orderable: false
         },
         {
             data: 'npk',
@@ -121,5 +121,11 @@
             }
         })
     })
+
+    dt.on( 'order.dt search.dt', function () {
+        dt.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+            cell.innerHTML = i+1;
+        } );
+    }).draw();
 </script>
 @endsection

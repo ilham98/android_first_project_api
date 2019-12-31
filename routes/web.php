@@ -11,9 +11,12 @@
 |
 */
 
+use App\PermintaanPengeluaranBarang;
 use Illuminate\Support\Facades\DB;
 use \Firebase\JWT\JWT;
 use Illuminate\Support\Facades\Hash;
+use Kreait\Firebase;
+use Kreait\Firebase\Messaging\CloudMessage;
 
 Route::get('/sqltest', function () {
     return view('sqltest');
@@ -29,7 +32,7 @@ Route::get('/password', function () {
 
 Auth::routes();
 
-Route::group(['middleware' => ['auth']], function () {
+Route::group(['middleware' => ['auth', 'roleCheck']], function () {
     Route::get('/', function () {
         return view('dashboard');
     });
@@ -45,6 +48,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('vendor/json', 'VendorController@json');
     Route::get('vendor/{id}/edit', 'VendorController@edit');
     Route::put('vendor/{id}', 'VendorController@update');
+    Route::delete('ajax/vendor/{id}', 'VendorController@ajaxDestroy');
 
     Route::put('ajax/vendor/temp/{id}', 'VendorController@tempUpdate');
     Route::delete('ajax/vendor/temp/{id}', 'VendorController@tempDestroy');
@@ -82,16 +86,25 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('aset/{id}', 'AsetController@edit');
     Route::put('aset/{id}', 'AsetController@update');
 
-    Route::get('ajax/aset', 'AsetController@ajaxIndex');
+    
+    Route::delete('ajax/aset/{id}', 'AsetController@ajaxDestroy');
 
     // permintaan pengeluaran barang
 
     Route::get('permintaan-pengeluaran-barang', 'PermintaanPengeluaranBarangController@index');
     Route::get('permintaan-pengeluaran-barang/tambah', 'PermintaanPengeluaranBarangController@create');
+    Route::get('permintaan-pengeluaran-barang/{id}/edit', 'PermintaanPengeluaranBarangController@edit');
     Route::get('permintaan-pengeluaran-barang/json', 'PermintaanPengeluaranBarangController@json');
 
     Route::post('ajax/permintaan-pengeluaran-barang', 'PermintaanPengeluaranBarangController@ajaxStore');
+    Route::put('ajax/permintaan-pengeluaran-barang/{permintaan_pengeluaran_barang_id}', 'PermintaanPengeluaranBarangController@ajaxUpdate');
+    Route::delete('ajax/permintaan-pengeluaran-barang/{permintaan_pengeluaran_barang_id}/', 'PermintaanPengeluaranBarangController@ajaxDestroy');
 
+    Route::post('ajax/permintaan-pengeluaran-barang/{permintaan_pengeluaran_barang_id}/aset/{id}', 'PermintaanPengeluaranBarangController@ajaxAsetStore');
+    
+    Route::put('ajax/permintaan-pengeluaran-barang/{permintaan_pengeluaran_barang_id}/aset/{id}', 'PermintaanPengeluaranBarangController@ajaxAsetUpdate');
+    Route::delete('ajax/permintaan-pengeluaran-barang/{permintaan_pengeluaran_barang_id}/aset/{id}', 'PermintaanPengeluaranBarangController@ajaxAsetDestroy');
+    
     Route::get('ajax-action/get-item-and-stock-for-asset', 'AjaxActionController@getItemAndStockForAsset');
     Route::get('ajax-action/get-item-and-stock-for-pengeluaran-barang', 'AjaxActionController@getItemAndStockForPengeluaranBarang');
 
@@ -103,10 +116,55 @@ Route::group(['middleware' => ['auth']], function () {
     Route::put('user/{id}', 'UserController@update');
 
     Route::delete('ajax/user/{id}', 'UserController@ajaxDestroy');
+
+    Route::get('/tracking-aset/{id}', 'TrackingAsetController@index');
+
+    Route::get('/report/aset', 'Report\AsetReportController@index');
+    Route::post('/report/aset/download', 'Report\AsetReportController@download');
+
+    Route::get('/report/purchase-order', 'Report\PurchaseOrderController@index');
+    Route::post('/report/purchase-order/download', 'Report\PurchaseOrderController@download');
+
+    Route::get('/report/pengeluaran-barang', 'Report\PengeluaranBarangController@index');
+    Route::post('/report/pengeluaran-barang/download', 'Report\PengeluaranBarangController@download');
 });
+
+Route::get('ajax/aset', 'AsetController@ajaxIndex');
 
 Route::get('home', 'HomeController@index')->name('home');
 
 Route::post('login', 'AuthController@login');
 
 Route::get('logout', 'AuthController@logout');
+
+
+Route::get('send-message-test', function() {
+    $messaging = (new Firebase\Factory())->createMessaging();
+
+    $message = CloudMessage::withTarget(/* see sections below */)
+        ->withNotification(Notification::create('Title', 'Body'))
+        ->withData(['key' => 'value']);
+
+    $messaging->send($message);
+});
+
+Route::get('send-to-firebase-service-test', function() {
+    // $aset = \App\Aset::find(84);
+
+    // $user_ids = \App\User::where('role_id', 3)->get()->map(function($u) {
+    //     return $u->id;
+    // })->toArray();
+
+    sendNotification(
+        "Berita Acara Penyerahan Aset", 
+        "Berita Acara Penyerahan Aset", 
+        [1,4,5,6,8,9], 
+        1,
+        65,
+        ['data' => ['message' => 'success'], 'status' => 200]
+    );
+});
+
+Route::get('/mantap', function() {
+    return \App\TrackingAset::where('aset_id', 127)->last($id);
+});

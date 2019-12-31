@@ -9,7 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class User extends Authenticatable
 {
     use Notifiable;
-
+    
     /**
      * The attributes that are mass assignable.
      *
@@ -41,10 +41,14 @@ class User extends Authenticatable
     const UPDATED_AT = 'updated_on';
 
     public function karyawan() {
-        return $this->belongsTo('App\SQLSRVKaryawan', 'npk', 'npk');
+        return $this->hasOne('App\SQLSRVKaryawan', 'npk', 'npk');
     }
 
     public function role() {
         return $this->belongsTo('App\Role', 'role_id', 'id');
+    }
+
+    public function firebaseToken() {
+        return $this->hasMany('App\FirebaseMessageServiceToken', 'user_id', 'id');
     }
 }

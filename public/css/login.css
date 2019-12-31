@@ -1,0 +1,167 @@
+body {
+    background: #1961AD;
+    width: 100%;    
+    overflow: hidden;
+}
+
+@font-face {
+    font-family: timeburner;
+    src: url("/fonts/timeburnernormal.ttf");
+}
+
+@font-face {
+    font-family: timeburnerbold;
+    src: url("/fonts/timeburnerbold.ttf");
+}
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+.left {
+    margin-top: 100px;
+}
+
+.right {
+    margin-top: 100px;
+}
+
+.left, .right {
+    position: absolute;
+}
+
+.left {
+    pointer-events: none;
+    min-width: 1360px;
+    z-index: 1;
+}
+
+.right {
+    min-width: 1360px;
+    z-index: 3;
+    pointer-events: none;
+
+}
+
+.input-container {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    width: 100%;
+    z-index: 2;
+}
+
+.input-form {
+    width: 300px;
+    background: white;
+    padding: 20px;
+    margin-top: 0px;
+    height: 600px;
+}
+
+.container {
+    width: 100%;
+    display: flex;  
+    justify-content: center;
+}
+
+.logo {   
+    width: 150px;
+}
+
+.logo-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+input {
+    
+}
+
+.title {
+    padding-left: 50px;
+    padding-top: 50px;
+    color: white;
+}
+
+.title div{
+    font-family: timeburner;
+}
+
+.title div:nth-child(1) {
+    margin-left: 20px;
+    font-size: 25px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.title div:nth-child(2) {
+    font-size: 80px;
+}
+
+.form-group {
+    margin-top: 10px;
+}
+
+button {
+    border: none;
+    background: #FB7822;
+    color: white;
+    font-size: 15px;
+}
+
+input, button {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+.title-small {
+    display: none;
+    font-family: timeburner;
+    text-align: center;
+    margin: 10px 0px;
+}
+
+.title-small div:nth-child(1) {
+    font-size: 18px;
+}
+
+.title-small div:nth-child(2) {
+    font-size: 24px;
+    color: #0b4582;
+}
+
+.error {
+    color: red;
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+    font-size: 13px;
+}
+
+@media(max-width: 768px) {
+    .title-small {
+        display: block;
+    }
+
+    .left {
+        z-index: 2;
+    }
+
+    .input-container {
+        z-index: 1;
+    }
+
+    .title {
+        display: none;
+    }
+
+    .input-form {
+        margin-top: 0px;
+    }
+
+    .form-group {
+        z-index: 5;
+    }
+}

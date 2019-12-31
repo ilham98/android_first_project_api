@@ -1,5 +1,7 @@
 @extends('master')
 
+@section('title', config('app.name').' | Purchase Order')
+
 @section('style')
 <link rel="stylesheet" type="text/css" href="{{ asset('css/dataTablesBootstrap4.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ asset('css/dataTablesBoostrap4AdditionalConfiguration.css') }}">
@@ -21,6 +23,11 @@
                     <div class='d-flex justify-content-end my-4'>
                         <a href="{{ url('purchase-order/tambah') }}" class='btn btn-primary'>Tambah Purchase Order</a>
                     </div>
+                    <div class="my-2 d-flex justify-content-end">
+                            <input type="date" id="start_date" class="form-control col-sm-2">
+                            <input type="date" id="end_date" class="form-control col-sm-2 ml-1">
+                            <button id="filterButton" class="btn btn-primary ml-1">Filter Tanggal</button>
+                        </div>
                     <table class='table' id='purchase-order-table' style="width: 100%">
                         <thead>
                             <tr>
@@ -94,6 +101,9 @@
 </script>
 <script>
     var csrf_token = "{{ csrf_token() }}";
+    $('#filterButton').click(function() {
+        dt.ajax.reload();
+    });
 </script>
 <script src="{{ asset('js/views/purchaseOrderIndex.js') }}"></script>
 @endsection

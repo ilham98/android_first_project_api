@@ -1,5 +1,25 @@
 @extends('master')
 
+@section('title', config('app.name').' | Edit PO')
+
+@section('style')
+    <style>
+        table {
+        counter-reset: rowNumber;
+        }
+
+        table tbody tr {
+            counter-increment: rowNumber;
+        }
+
+        table tbody tr td:first-child::before {
+            content: counter(rowNumber);
+            min-width: 1em;
+            margin-right: 0.5em;
+        }
+    </style>
+@endsection
+
 @section('content')
 
 <div class="app-main__outer">
@@ -48,10 +68,20 @@
                             </div>
 
                             <h6 class='font-weight-bold mt-5'>Item Details</h6>
-                            <hr>
-                            <ol class="ml-3" id="item-list">
-                                
-                            </ol>
+
+                            <table class="table" id="itemTable">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Nama</th>
+                                        <th>Stok</th>
+                                        <th>Opsi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
                             <!-- width: 0px; height: 0px; border: none -->
                             <input type="text" style="width: 0px; height: 0px; border: none" value="" id="item" name="item">
                             <button type="button" class="btn btn-primary" id="openItemModal">Tambah Item</button>
@@ -95,8 +125,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="btnTutupItem" data-dismiss="modal">Tutup</button>
-                <button type="button" class="btn btn-primary" id="btnAction">Tambah</button>
+                <button type="button" class="btn btn-secondary" id="buttonTutupModal" data-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-primary" id="buttonTambahItem">Tambah</button>
             </div>
         </div>
     </div>
@@ -109,141 +139,61 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 <script>
-    var mode = 'tambah';
-    var indexID = null;
-    var editID = null;
-    var idx = 0;
-
     var items = {!! $items !!};
 
+
+    var buttonOpenItemModal = $('#openItemModal');
+    var buttonTutupModal = $('#buttonTutupModal');
+    var buttonTambahItem = $('#buttonTambahItem');
+    var tableItem = $('#itemTable');
+    var tbodyTableItem = $('#itemTable tbody');
+    var itemNama = $('#item-nama');
+    var itemStok = $('#item-stok');
+    var modeEdit = false;
+    var editId = null;
+
+        console.log(items.length);
+
     for(var x = 0; x < items.length; x++) {
-        $('#item-list').append(`
-                <li data-index="${ x }" >
-                    <span class="nama-val" data-index="${ x }">${ items[x].nama }</span>
-                    | Stok: 
-                    <span class="stok-val" data-index="${ x }">${ parseInt(items[x].stok) }</span>
-                    <i class="btnEdit pe-7s-pen text-success" data-id="${ items[x].id }" data-index="${ x }"></i>
-                    <i class="btnDelete pe-7s-trash  text-danger" data-id="${ items[x].id }"></i>
-                </li>
-            `);
-        idx++;
+        tbodyTableItem.append(`
+            <tr class='itemContainer' data-id="${ items[x].id }">
+                <td></td>
+                <td class='itemNamaVal'>${ items[x].nama }</td>
+                <td class='itemStokVal'>${ parseInt(items[x].stok) }</td>
+                <td>
+                    <i class='pe-7s-pen text-success itemEdit' />
+                    <i class='pe-7s-trash  text-danger itemDelete' data-id="${ items[x].id }"/>  
+                </td>
+            </tr>
+        `);
     }
 
-    $('#btnAction').click(function() {
-        var nama = $('#item-nama').val();
-        var stok = $('#item-stok').val();
-        var error = false;
-        var onlyNumber = /^\d+$/;
-        
-        if($('#item-list').children().length > 0) {
-            $('#item-list > li').each(function() {
-                var index = $(this).data('index');
-                var prevNama = $(`.nama-val[data-index="${index}"]`).html();
-                if(nama.trim() == prevNama && (indexID != index && mode == 'tambah')) {
-                    $('.item-nama-error').html('Nama item yang sama telah diinput sebelumnya');
-                    error = true;
-                }
-            });
-        };
-
-        if(nama.trim() == '') {
-            $('.item-nama-error').html('Nama wajib diisi');
-            error = true;
-        }     
-
-        if(stok.trim() == ''){
-            $('.item-stok-error').html('Stok wajib diisi');
-            error = true;
-        }      
-
-        if(onlyNumber.test(stok) == false) {
-            $('.item-stok-error').html('Stok harus diisi hanya dengan karakter angka');
-            error = true;
-        }        
-
-        if(!error) {
-            if(mode == 'edit') {
-                $.ajax({
-                    url: '/ajax/item/'+editID,
-                    method: 'PUT',
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        nama,
-                        stok
-                    },
-                    success: function() {
-                        $(`.nama-val[data-index="${indexID}"]`).html(nama);
-                        $(`.stok-val[data-index="${indexID}"]`).html(stok);
-                        mode = 'tambah';
-                        Swal.fire(
-                            'Update Data Berhasil!',
-                            'Data PO berhasil diupdate.',
-                            'success'
-                        )
-                    }
-                });
-                
-            } else {
-                $.ajax({
-                    url: '/ajax/item',
-                    method: 'POST',
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        nama,
-                        stok,
-                        purchase_order_id: {!! $purchase_order->id !!}
-                    },
-                    success: function(res) {
-                        $('#item-list').append(`
-                            <li data-index="${ idx }">
-                                <span class="nama-val" data-index="${ idx }">${ nama }</span>
-                                | Stok: 
-                                <span class="stok-val" data-index="${ idx }">${ parseInt(stok) }</span>
-                                <i class="btnEdit pe-7s-pen text-success" data-index="${ idx }" data-id="${ res.id }"></i>
-                                <i class="btnDelete pe-7s-trash  text-danger" data-id="${ res.id }"></i>
-                            </li>
-                        `);
-                        mode = 'tambah';
-                        Swal.fire(
-                            'Tambah Data Berhasil!',
-                            'Data PO berhasil diupdate.',
-                            'success'
-                        )
-                        idx++;
-                    }
-                });
-            }
-            $('#itemModal').modal('hide');
-        }
-    });
-
-    $('#item-list').on('click', '.btnEdit', function() {
-        var index = $(this).data('index');
-        var nama = $(`.nama-val[data-index="${index}"]`).html();
-        var stok = $(`.stok-val[data-index="${index}"]`).html();
-        indexID = index;
-        editID = $(this).data('id');
-        console.log(editID);
-        $('#btnAction').html('Update Item');
-        mode = 'edit';
-        $('#item-nama').val(nama);
-        $('#item-stok').val(stok);
-        $('.item-nama-error').html('');
-        $('.item-stok-error').html('');
+    var openModal = function() {
         $('#itemModal').modal('show');
+    };
+    
+    var closeModal = function() {
+        $('#itemModal').modal('hide');
+    }
+
+    buttonOpenItemModal.click(function() {
+        modeEdit = false;
+        editId = null;
+        $('#item-nama').val('');
+        $('#item-stok').val('');
+        openModal();
     });
 
-    $('#item-list').on('click', '.btnDelete', function() {
-        var t = $(this)
+    $('body').on('click', '.itemDelete', function() {
+        var t = $(this);
         $.ajax({
-            url: '/ajax/item/'+$(this).data('id'),
+            url: '/ajax/item/'+ $(this).data('id'),
             method: 'DELETE',
             data: {
                 _token: "{{ csrf_token() }}"
             },
             success: function(res) {
-                t.parent().remove();
-                $(this).parent().remove();
+                t.closest('tr').remove();
                 Swal.fire(
                     'Hapus Data Berhasil!',
                     'Data Item Berhasil dihapus.',
@@ -260,13 +210,130 @@
         });
     });
 
-    $('#openItemModal').click(function() {
-        $('#btnAction').html('Tambah Item');
-        $('#item-nama').val('');
-        $('#item-stok').val('');
+
+    function isValid(nama, stok) {
+        error = false;       
+        if(tbodyTableItem.children().length > 0) {
+            $('#itemTable tbody tr').each(function() {
+                var index = $(this).index();
+                var namaPrev = $(this).children('.itemNamaVal').html();
+                var stokPrev = $(this).children('.itemStokVal').html();
+                // console.log(index, editId);
+                if(nama.trim() == namaPrev && (editId != index || modeEdit == false)) {
+                    $('.item-nama-error').html('Nama item yang sama telah diinput sebelumnya');
+                    error = true;
+                }
+            });
+        };
+
+        if(nama.trim() == '') {
+            $('.item-nama-error').html('Nama wajib diisi');
+            error = true;
+        }     
+
+        if(stok.trim() == ''){
+            $('.item-stok-error').html('Stok wajib diisi');
+            error = true;
+        }   
+
+        if(/^\d+$/.test(stok) == false) {
+            $('.item-stok-error').html('Stok wajib disisi dengan angka');
+            error = true;
+        }
+
+        return !error;
+    }
+
+    function appendNamaToTbody(itemNamaVal, itemStokVal, id) {
+        var tbodyChild = tbodyTableItem.children().length;
         $('.item-nama-error').html('');
         $('.item-stok-error').html('');
-        $('#itemModal').modal('show');
+        tbodyTableItem.append(`
+            <tr class='itemContainer'">
+                <td></td>
+                <td class='itemNamaVal'>${ itemNamaVal }</td>
+                <td class='itemStokVal'>${ itemStokVal }</td>
+                <td>
+                    <i class='pe-7s-pen text-success itemEdit' />
+                    <i class='pe-7s-trash  text-danger itemDelete' data-id="${ id }"/>  
+                </td>
+            </tr>
+        `);
+
+        closeModal();
+    }
+
+    function editTbody(itemNamaVal, itemStokVal) {
+        var tbodyChild = tbodyTableItem.children().length;
+        var itemNamaTable = $('#itemTable tbody :nth-child('+ (editId+1) +') .itemNamaVal');
+        var itemStokTable = $('#itemTable tbody :nth-child('+ (editId+1) +') .itemStokVal');
+        itemNamaTable.html(itemNamaVal);
+        itemStokTable.html(itemStokVal);
+        
+        closeModal();
+    }
+
+    $('body').on('click', '.itemEdit', function() {
+        var trIndex = $(this).closest('tr').index();
+        var itemNamaTable = $('#itemTable tbody :nth-child('+ (trIndex+1) +') .itemNamaVal');
+        var itemStokTable = $('#itemTable tbody :nth-child('+ (trIndex+1) +') .itemStokVal');
+        modeEdit = true;
+        editId = trIndex;
+        asetId = $(this).closest('tr').data('id');
+        itemNama.val(itemNamaTable.html());
+        itemStok.val(itemStokTable.html());
+        // console.log(trLen);
+        openModal();
+    });
+
+    buttonTambahItem.click(function() {
+        var itemNamaVal = itemNama.val();
+        var itemStokVal = itemStok.val();
+    
+        if(!modeEdit) {
+            if(isValid(itemNamaVal, itemStokVal)) {
+                $.ajax({
+                    url: '/ajax/item',
+                    method: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        nama: itemNamaVal,
+                        stok: itemStokVal,
+                        purchase_order_id: {!! $purchase_order->id !!}
+                    },
+                    success: function(res) {
+                        appendNamaToTbody(itemNamaVal, itemStokVal, res.id);
+                   
+                        Swal.fire(
+                            'Tambah Data Berhasil!',
+                            'Data PO berhasil diupdate.',
+                            'success'
+                        )
+                    }
+                });
+            }
+        } else {
+            $.ajax({
+                    url: '/ajax/item/'+asetId,
+                    method: 'PUT',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        nama: itemNamaVal,
+                        stok: itemStokVal,
+                        purchase_order_id: {!! $purchase_order->id !!}
+                    },
+                    success: function(res) {
+                        editTbody(itemNamaVal, itemStokVal);
+                   
+                        Swal.fire(
+                            'Tambah Data Berhasil!',
+                            'Data PO berhasil diupdate.',
+                            'success'
+                        )
+                    }
+                });
+            
+        }
     });
 
     $("#purchaseOrderForm").validate({
@@ -282,19 +349,19 @@
         },
         wrapper: 'div',
         submitHandler: function() {
-            if($('#item-list').children().length > 0) {
+            if($('#itemTable tbody').children().length > 0) {
                 itemArr = [];
-                $('#item-list > li').each(function() {
+                $('#itemTable tbody tr').each(function() {
                     var index = $(this).data('index');
-                    var nama = $(`.nama-val[data-index="${index}"]`).html();
-                    var stok = $(`.stok-val[data-index="${index}"]`).html();
+                    var nama = $(this).children('.itemNamaVal').html();
+                    var stok = $(this).children('.itemStokVal').html();
                     itemArr.push({
                         nama, stok
                     });
                 });
                 $.ajax({
-                    url: '/ajax/purchase-order/'+{{ $purchase_order->id }},
-                    method: 'PUT',
+                    url: '/ajax/purchase-order',
+                    method: 'POST',
                     data: {
                         _token: "{{ csrf_token() }}",
                         items: JSON.stringify(itemArr),
@@ -303,9 +370,13 @@
                         po_number: $('#po_number').val()
                     },
                     success: function() {
+                        $('#po_number').val('');
+                        $('#vendor_id').val('');
+                        $('#date').val(''),
+                        $('#item-list').html('');
                         Swal.fire(
-                            'Update Data Berhasil!',
-                            'Data PO berhasil diupdate.',
+                            'Tambah Data Berhasil!',
+                            'Data PO berhasil ditambahkan.',
                             'success'
                         )
                     }
@@ -317,16 +388,7 @@
                     'error'
                 )
             }
-            
-            
-            // $.ajax({
-            //     url: '/ajax/purchase-order',
-            //     method: 'POST',
-
-            // });
         }
     });
-
-    var itemArr = [];
 </script>
 @endsection

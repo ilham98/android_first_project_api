@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "684413987238",
+    "firebase_url": "https://sm-aset-ti.firebaseio.com",
+    "project_id": "sm-aset-ti",
+    "storage_bucket": "sm-aset-ti.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:684413987238:android:c064d2acd80e3102c88767",
+        "android_client_info": {
+          "package_name": "com.example.smasetti"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "684413987238-psaa8nnsav9mhd55oc1mntlsg2t17fg5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.smasetti",
+            "certificate_hash": "013f1b7eab5703a3fa4a9c41533f4be124a1c840"
+          }
+        },
+        {
+          "client_id": "684413987238-1a889c4g2a5arbe0emuirahr6g361j88.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.smasetti",
+            "certificate_hash": "00301915f87d1117fc622f5d39f3c5a4a05717f2"
+          }
+        },
+        {
+          "client_id": "684413987238-bvugerhic8mn2drgd6qoh8g1dfe0505d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1pHVG-rEkqefvIi0NdSIIFEuPRU8lcIE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "684413987238-bvugerhic8mn2drgd6qoh8g1dfe0505d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

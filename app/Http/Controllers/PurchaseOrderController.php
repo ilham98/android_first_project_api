@@ -78,11 +78,19 @@ class PurchaseOrderController extends Controller
         return redirect(url()->previous());
     }
 
-    public function json() {
-        $purchase_order = PurchaseOrder::orderBy('id', 'desc')->get();
+    public function json(Request $request) {
+        $purchase_order = new PurchaseOrder;
+        if($request->start_date)
+            $purchase_order = $purchase_order->where('date', '>=', $request->start_date);
+        if($request->end_date)
+            $purchase_order = $purchase_order->where('date', '<=', $request->end_date);
+        $purchase_order = $purchase_order->orderBy('created_on', 'desc')->get();
+
         return DataTables::of($purchase_order)
             ->addColumn('vendor', function($purchase_order) {
                 return $purchase_order->vendor->nama;
+            })->editColumn('date', function($purchase_order) {
+                return date('d-m-Y', strtotime($purchase_order->created_on));
             })->addColumn('action', function ($purchase_order) {
                 return '
                     <a href="/purchase-order/'.$purchase_order->id.'/edit" data-number='.$purchase_order->number.' ><i class="pe-7s-pen text-success"></i></a>
@@ -92,7 +100,7 @@ class PurchaseOrderController extends Controller
     }
 
     public function ajaxIndex(Request $request) {
-        $purchase_order = PurchaseOrder::where('po_number', 'like', '%'.$request->q.'%')->get();
+        $purchase_order = PurchaseOrder::where('po_number', 'like', '%'.$request->q.'%')->orderBy('created_on', 'desc')->get();
         return $purchase_order;
     }
 
@@ -124,8 +132,10 @@ class PurchaseOrderController extends Controller
 
     public function ajaxDestroy($id) {
         $purchase_order = PurchaseOrder::find($id);
+        $purchase_order->update([
+            'deleted_by' => Auth::user()->npk
+        ]);
         $purchase_order->delete();
-
         return response(['message' => 'success', 200]);
     }
 }

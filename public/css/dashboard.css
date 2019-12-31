@@ -18,17 +18,53 @@ ul.timeline > li {
 }
 ul.timeline > li:before {
     content: ' ';
-    background: white;
+    background: #1961AD;
     display: inline-block;
     position: absolute;
     border-radius: 50%;
-    border: 3px solid #22c0e8;
+    border: 3px solid #1961AD;
     left: 20px;
     width: 20px;
     height: 20px;
     z-index: 400;
 }
 
+@font-face {
+    font-family: timeburnerbold;
+    src: url("/fonts/timeburnerbold.ttf");
+}
+
 ul.timeline > li > a, ul.timeline > li > p {
     margin-left: 40px;
+}
+
+.search-container {
+    display: flex;
+}
+
+.search {
+    width: 30%;
+}
+
+.search-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 10px;
+}
+
+.search-text div:nth-child(1) {
+    font-family: timeburner;
+    text-transform: uppercase;
+}
+
+.search-text div:nth-child(2) {
+    font-family: timeburner;
+    text-transform: uppercase;
+    font-size: 30px;
+    color: #1961AD;
+}
+
+.select2-container--default .select2-selection--single {
+    border-radius: 0px !important;
 }

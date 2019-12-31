@@ -9,6 +9,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\VendorImport;
 use App\TempVendor;
 use Illuminate\Support\Facades\DB;
+use Auth;
 
 class VendorController extends Controller
 {
@@ -23,7 +24,9 @@ class VendorController extends Controller
     public function store(Request $request) { 
         $request->validate([
             'nama' => 'required',
-            'contact_person' => 'required'
+            'contact_person' => 'required',
+            'no_telepon' => 'required',
+            'email' => 'required'
         ]);
         Vendor::create($request->all());
         return redirect(url('vendor'))->with('success', 'Data vendor berhasil diinput');
@@ -37,7 +40,9 @@ class VendorController extends Controller
     public function update(Request $request, $id) {
         $request->validate([
             'nama' => 'required',
-            'contact_person' => 'required'
+            'contact_person' => 'required',
+            'no_telepon' => 'required',
+            'email' => 'required'
         ]);
         $vendor = Vendor::find($id);
         $vendor->update($request->all());
@@ -48,8 +53,21 @@ class VendorController extends Controller
         $vendor = Vendor::all();
         return DataTables::of($vendor)
             ->addColumn('action', function ($vendor) {
-                return '<a href="/vendor/'.$vendor->id.'/edit" class="btn btn-xs btn-primary"><i class="glyphicon glyphicon-edit"></i> Edit</a>';
+                return '
+                    <a href="/vendor/'.$vendor->id.'/edit"><i class="pe-7s-pen text-success"></i></a>
+                    <span class="btnDelete" data-nama="'.$vendor->nama.'" data-id="'.$vendor->id.'"><i class="pe-7s-trash  text-danger"></i></span>
+                ';
             })->make(true);
+    }
+
+    public function ajaxDestroy($id) {
+        $vendor = Vendor::find($id);
+        if($vendor->purchase_order()->exists()) 
+            return response(['message' => 'error'], 500);
+        $vendor->update([
+            'deleted_by' => Auth::user()->npk
+        ]);
+        $vendor->delete();
     }
 
     public function import(Request $request) 

@@ -1,5 +1,7 @@
 @extends('master')
 
+@section('title', config('app.name').' | Tambah User')
+
 @section('style')
 <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
 @endsection
@@ -19,9 +21,13 @@
                     </div>
                     <div class="card-body">
                         <form id="userForm" action="{{ url('user') }}" class='col-sm-6' method='POST'>
-                            <div class='form-group'>
-                                <label>NPK</label>
-                                <input type="text" name='npk' value='{{ old("npk") }}' class='form-control'>
+                            <div class="form-group">
+                                <label>Departemen</label>
+                                <select class="form-control" name="departemen" id="departemen"></select>
+                            </div>
+                            <div class="form-group">
+                                <label>User</label>
+                                <select disabled class="form-control" name="npk" id="user"></select>
                             </div>
                             @if($errors->has('npk'))
                             <p class='text-danger'>{{ $errors->first('npk') }}</p>
@@ -38,13 +44,6 @@
                             @if($errors->has('role_id'))
                                 <p class='text-danger'>{{ $errors->first('role_id') }}</p>
                             @endif
-                            <div class="form-group" id="departemen_container">
-                                <label>Departemen</label>
-                                <select class="form-control" name="departemen_id" id="departemen_id"></select>
-                                @if($errors->has('departemen_id'))
-                                    <p class='text-danger'>{{ $errors->first('departemen_id') }}</p>
-                                @endif
-                            </div>
                             @csrf
                             @method('POST')
                             <div class='form-group'>
@@ -66,36 +65,56 @@
 <script src="{{ asset('js/jqueryValidation.min.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
 <script>
-    $('#departemen_id').select2({
+      $('#departemen').select2({
         ajax: {
-            url: '/ajax/departemen',
-            dataType: 'json',
-            type: 'GET',
-            processResults: function(data) {
-                return {
-                    results: $.map(data, function(item) {
-                        return {
-                            id: item.id,
-                            text: item.nama
-                        }
-                    })
-                }
+        url: '/ajax/departemen',
+        dataType: 'json',
+        type: 'GET',
+    
+        processResults: function (data) {
+            return {
+                results: $.map(data, function(item) {
+                    return {
+                        id: item.KodeUnitKerja,
+                        text: item.UnitKerja
+                    }
+                })
             }
-            // Additional AJAX parameters go here; see the end of this chapter for the full code of this example
         }
-    });
+        // Additional AJAX parameters go here; see the end of this chapter for the full code of this example
+        }
+  });
 
-    $('#departemen_container').hide();
-    @if(old('role_id') == 6)
-        $('#departemen_container').show();
-    @endif
+  $('#departemen').on('select2:select', function (e) {
+    $('#user').val(null).trigger('change');
+    var data = e.params.data;
 
-    $('#role_id').change(function() {
-        var val = $(this).val();
-        $('#departemen_container').hide();
-        if(val == 6)
-            $('#departemen_container').show();
-            
-    });
+    $('#user').removeAttr('disabled');
+});
+
+  $('#user').select2({
+    ajax: {
+      url: '/ajax/karyawan',
+      dataType: 'json',
+      type: 'GET',
+      data: function(data) {
+        return {
+          q: data.term,
+          kode_unit_kerja: $("#departemen").val()
+        }  
+      },
+      processResults: function (data) {
+          return {
+              results: $.map(data, function(item) {
+                return {
+                    id: item.npk,
+                    text: item.nama
+                }
+              })
+          }
+      }
+      // Additional AJAX parameters go here; see the end of this chapter for the full code of this example
+    }
+  });
 </script>
 @endsection

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Role;
 use Illuminate\Http\Request;
 use App\User;
+use App\SQLSRVKaryawan;
 use DataTables;
 use Illuminate\Support\Facades\Hash;
 use Auth;
@@ -40,17 +41,23 @@ class UserController extends Controller
             'role_id' => 'required'
         ];
 
-        if($request->role_id == 6) {
-            $rules = array_merge($rules, [
-                'departemen_id' => 'required'
-            ]);
-        }
+        $karyawan = SQLSRVKaryawan::where('npk', $request->npk)->first();
+
+        if(!$karyawan)
+            return redirect(url()->previous());
+
+
+        // if($request->role_id == 6) {
+        //     $rules = array_merge($rules, [
+        //         'departemen_id' => 'required'
+        //     ]);
+        // }
 
         $request->validate($rules);
 
         $user = User::create(array_merge($request->all(), ['password' => Hash::make($request->npk)]));
 
-        return redirect(url()->previous());
+        return redirect(url('user'));
     }
 
     public function edit($id) {
@@ -65,11 +72,10 @@ class UserController extends Controller
             'role_id' => 'required'
         ];
 
-        if($request->role_id == 6) {
-            $rules = array_merge($rules, [
-                'departemen_id' => 'required'
-            ]);
-        }
+        $karyawan = SQLSRVKaryawan::where('npk', $request->npk)->first();
+
+        if(!$karyawan)
+            return redirect(url()->previous());
 
         $user = User::find($id);
         $user->update(array_merge($request->all(), ['password' => Hash::make($request->npk)]));
